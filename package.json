@@ -4,14 +4,18 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.32.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -22,5 +26,9 @@
   "bugs": {
     "url": "https://github.com/Sameh-Sany/books_store/issues"
   },
-  "homepage": "https://github.com/Sameh-Sany/books_store#readme"
+  "homepage": "https://github.com/Sameh-Sany/books_store#readme",
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "sequelize-cli": "^6.6.1"
+  }
 }
