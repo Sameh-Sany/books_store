@@ -1,0 +1,22 @@
+{
+  "name": "books-store",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sameh-Sany/books_store.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sameh-Sany/books_store/issues"
+  },
+  "homepage": "https://github.com/Sameh-Sany/books_store#readme"
+}
