@@ -4,11 +4,11 @@ dotenv.config();
 
 exports.sequelize = new Sequelize(
   "book_store",
-  process.env.POSTGRES_NAME,
-  process.env.POSTGRES_PASSWORD,
+  process.env.MYSQL_NAME,
+  process.env.MYSQL_PASSWORD,
   {
     host: "localhost",
-    dialect: "postgres",
+    dialect: "mysql",
     logging: false,
   }
 );
