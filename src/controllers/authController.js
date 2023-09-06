@@ -52,8 +52,8 @@ exports.signup = async (req, res, next) => {
         token: "Bearer " + token,
       })
     );
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err);
     return res.status(500).json({ message: "something went wrong" });
   }
 };
@@ -101,8 +101,8 @@ exports.signin = async (req, res, next) => {
         token: "Bearer " + token,
       })
     );
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err);
     return res.status(500).json({ message: "something went wrong" });
   }
 };
@@ -127,8 +127,8 @@ exports.myProfile = async (req, res, next) => {
       return res.status(400).json({ message: "User does not exist" });
     }
     return res.status(200).json(successResponse(user));
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err);
     return res.status(500).json({ message: "something went wrong" });
   }
 };
@@ -173,8 +173,8 @@ exports.updateProfile = async (req, res, next) => {
     delete user.password;
 
     return res.status(200).json(successResponse(user));
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err);
     return res.status(500).json({ message: "something went wrong" });
   }
 };

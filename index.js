@@ -16,7 +16,7 @@ app.use(express.json());
 // use routes
 app.use("/api/upload", uploadRoutes);
 app.use("/api/auth", authRoutes);
-// app.use("/api/books", bookRoutes);
+app.use("/api/books", bookRoutes);
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
