@@ -1,23 +1,22 @@
 const express = require("express");
 const app = express();
-const db = require("./src/config/db");
 const morgan = require("morgan");
+
+// require routes
+const uploadRoutes = require("./src/routes/upload");
+const authRoutes = require("./src/routes/auth");
+const bookRoutes = require("./src/routes/books");
 
 // middlewares
 app.use(morgan("dev"));
-
-// require routes
-const authRoutes = require("./src/routes/auth");
+app.use(express.json());
 
 // db connection
-db.sequelize
-  .authenticate()
-  .then(() => console.log("Database connected successfully"))
-  .catch((err) => console.log("Error: " + err));
 
 // use routes
-app.use(express.json());
+app.use("/api/upload", uploadRoutes);
 app.use("/api/auth", authRoutes);
+// app.use("/api/books", bookRoutes);
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");

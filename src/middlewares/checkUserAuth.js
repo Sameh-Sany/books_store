@@ -1,4 +1,5 @@
-const User = require("../models/user");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 const jwt = require("jsonwebtoken");
 
 exports.checkUserAuth = async (req, res, next) => {
@@ -19,7 +20,16 @@ exports.checkUserAuth = async (req, res, next) => {
       return res.status(401).json({ message: "You are not authenticated!" });
     }
 
-    const user = await User.findOne({ where: { id: decodedToken.id } });
+    const user = await prisma.user.findUnique({
+      where: {
+        id: decodedToken.id,
+      },
+    });
+
+    if (!user) {
+      return res.status(401).json({ message: "You are not authenticated!" });
+    }
+
     req.user = user;
 
     next();

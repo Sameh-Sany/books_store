@@ -1,14 +1,15 @@
-const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const successResponse = require("../helpers/successResponse");
 const { validationResult } = require("express-validator");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
 // signup user
 
-exports.signup = async (req, res) => {
+exports.signup = async (req, res, next) => {
   try {
-    const { username, password, email, age } = req.body;
+    const { username, password, email, age, image } = req.body;
 
     // check if validation errors exist
     const errors = validationResult(req);
@@ -17,17 +18,27 @@ exports.signup = async (req, res) => {
     }
 
     // check if user exists
-    const emailExists = await User.findOne({ where: { email } });
+    const emailExists = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
 
     if (emailExists) {
       return res.status(400).json({ message: "User email already exists" });
     }
-    const user = await User.create({
-      username,
-      password: bcrypt.hashSync(password, 10),
-      email,
-      age,
+
+    const user = await prisma.user.create({
+      data: {
+        username,
+        password: bcrypt.hashSync(password, 10),
+        email,
+        age,
+        image,
+      },
     });
+
+    delete user.password;
 
     // create token
     const token = jwt.sign(
@@ -41,14 +52,15 @@ exports.signup = async (req, res) => {
         token: "Bearer " + token,
       })
     );
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "something went wrong" });
   }
 };
 
 // signin user
 
-exports.signin = async (req, res) => {
+exports.signin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -59,7 +71,11 @@ exports.signin = async (req, res) => {
     }
 
     // check if user not exists
-    const user = await User.findOne({ where: { email } });
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
 
     if (!user) {
       return res.status(400).json({ message: "User does not exist" });
@@ -70,6 +86,8 @@ exports.signin = async (req, res) => {
     if (!passwordIsValid) {
       return res.status(400).json({ message: "Invalid password" });
     }
+
+    delete user.password;
 
     // create token
     const token = jwt.sign(
@@ -83,12 +101,13 @@ exports.signin = async (req, res) => {
         token: "Bearer " + token,
       })
     );
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "something went wrong" });
   }
 };
 
-exports.myProfile = async (req, res) => {
+exports.myProfile = async (req, res, next) => {
   try {
     // check if validation errors exist
     const errors = validationResult(req);
@@ -96,17 +115,25 @@ exports.myProfile = async (req, res) => {
       return res.status(400).json({ message: errors.array() });
     }
 
-    const user = await User.findOne({ where: { id: req.user.id } });
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    delete user.password;
+
     if (!user) {
       return res.status(400).json({ message: "User does not exist" });
     }
     return res.status(200).json(successResponse(user));
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "something went wrong" });
   }
 };
 
-exports.updateProfile = async (req, res) => {
+exports.updateProfile = async (req, res, next) => {
   try {
     const { username, email, age } = req.body;
 
@@ -116,13 +143,23 @@ exports.updateProfile = async (req, res) => {
       return res.status(400).json({ message: errors.array() });
     }
 
-    const user = await User.findOne({ where: { id: req.user.id } });
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
     if (!user) {
       return res.status(400).json({ message: "User does not exist" });
     }
 
     if (email !== user.email) {
-      const emailExists = await User.findOne({ where: { email } });
+      const emailExists = await prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+
       if (emailExists) {
         return res.status(400).json({ message: "User email already exists" });
       }
@@ -133,8 +170,11 @@ exports.updateProfile = async (req, res) => {
     user.age = age;
     await user.save();
 
+    delete user.password;
+
     return res.status(200).json(successResponse(user));
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "something went wrong" });
   }
 };
